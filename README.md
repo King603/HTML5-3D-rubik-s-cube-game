@@ -1,1 +1,4 @@
-# HTML5-3D-rubik-s-cube-game
+# HTML5 3D魔方小游戏
+
+项目步骤：
+1. 创建界面
