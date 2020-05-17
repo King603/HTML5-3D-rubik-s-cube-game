@@ -5,7 +5,7 @@ import Game from "./Game.js";
 
 // 监听触摸移动事件
 window.addEventListener("touchmove", () => { });
-document.addEventListener("touchmove", event => event.preventDefault(), { passive: !1 });
+document.addEventListener("touchmove", event => event.preventDefault(), { passive: false });
 // 遍历所有rang元素
 document.querySelectorAll("range").forEach(el => {
   // 建立一个div元素

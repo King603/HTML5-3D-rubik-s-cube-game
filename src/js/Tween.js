@@ -2,16 +2,16 @@ import Animation from "./Animation.js";
 export default class extends Animation {
   /**
    * 渐变类
-   * @param {Object} options 首选项 
+   * @param {{ duration:Number, easing:() => { }, onUpdate:() => { }, onComplete:() => { }, delay:Boolean, yoyo:Boolean }} options 首选项 
    */
   constructor(options) {
-    super(!1);
+    super(false);
     this.duration = options.duration || 500;
     this.easing = options.easing || (t => t);
     this.onUpdate = options.onUpdate || (() => { });
     this.onComplete = options.onComplete || (() => { });
-    this.delay = options.delay || !1;
-    this.yoyo = options.yoyo ? !1 : null;
+    this.delay = options.delay || false;
+    this.yoyo = options.yoyo ? false : null;
     this.progress = 0;
     this.value = 0;
     this.delta = 0;
@@ -27,7 +27,7 @@ export default class extends Animation {
    */
   update(delta) {
     let old = this.value * 1;
-    this.progress += delta / this.duration * (this.yoyo === !0 ? -1 : 1);
+    this.progress += delta / this.duration * (this.yoyo === true ? -1 : 1);
     this.value = this.easing(this.progress);
     this.delta = this.value - old;
     if (this.values !== null)

@@ -1,7 +1,7 @@
 import Draggable from "./Draggable.js";
-import Tween from "./Tween.js";
 import Easing from "./Easing.js";
 import Game from "./Game.js";
+import Tween from "./Tween.js";
 
 // 设定状态常态
 // 停止
@@ -24,7 +24,7 @@ export default class {
     this.flipEasings = [Easing.Power.Out(3), Easing.Sine.Out(), Easing.Back.Out(2)];
     this.flipSpeeds = [125, 200, 350];
     this.raycaster = new THREE.Raycaster();
-    let helperMaterial = new THREE.MeshBasicMaterial({ depthWrite: !1, transparent: !0, opacity: 0, color: 0x0033ff });
+    let helperMaterial = new THREE.MeshBasicMaterial({ depthWrite: false, transparent: true, opacity: 0, color: 0x0033ff });
     this.group = new THREE.Object3D();
     this.game.cube.object.add(this.group);
     this.helper = new THREE.Mesh(new THREE.PlaneBufferGeometry(20, 20), helperMaterial.clone());
@@ -66,7 +66,7 @@ export default class {
       // 获取边相交
       let edgeIntersect = this.getIntersect(position.current, this.edges, !1);
       // 边相交是否存在
-      if (edgeIntersect !== !1) {
+      if (edgeIntersect !== false) {
         this.dragNormal = edgeIntersect.face.normal.round();
         this.flipType = "layer";
         this.attach(this.helper, this.edges);
@@ -85,28 +85,27 @@ export default class {
         this.helper.updateMatrixWorld();
       }
       // 获取平面相交
-      let planeIntersect = this.getIntersect(position.current, this.helper, !1);
-      if (planeIntersect === !1)
+      let planeIntersect = this.getIntersect(position.current, this.helper, false).point;
+      if (planeIntersect === false)
         return;
-      this.dragCurrent = this.helper.worldToLocal(planeIntersect.point);
+      this.dragCurrent = this.helper.worldToLocal(planeIntersect);
       this.dragTotal = new THREE.Vector3();
       this.state = this.state === STILL ? PREPARING : this.state;
     };
-    // 设置Draggable类的onDragMove方法
     this.draggable.onDragMove = position => {
       if (this.scramble !== null)
         return;
-      if (this.state === STILL || (this.state === ANIMATING && this.gettingDrag === !1))
+      if (this.state === STILL || (this.state === ANIMATING && this.gettingDrag === false))
         return;
-      let planeIntersect = this.getIntersect(position.current, this.helper, !1);
-      if (planeIntersect === !1)
+      let planeIntersect = this.getIntersect(position.current, this.helper, false);
+      if (planeIntersect === false)
         return;
       let point = this.helper.worldToLocal(planeIntersect.point.clone());
       this.dragDelta = point.clone().sub(this.dragCurrent).setZ(0);
       this.dragTotal.add(this.dragDelta);
       this.dragCurrent = point;
       this.addMomentumPoint(this.dragDelta);
-      if (this.state === PREPARING && this.dragTotal.length() > .05) {
+      if (this.state === PREPARING && this.dragTotal.length() > 0.05) {
         this.dragDirection = this.getMainAxis(this.dragTotal);
         if (this.flipType === "layer") {
           let direction = new THREE.Vector3();
@@ -114,21 +113,21 @@ export default class {
           let worldDirection = this.helper.localToWorld(direction).sub(this.helper.position);
           let objectDirection = this.edges.worldToLocal(worldDirection).round();
           this.flipAxis = objectDirection.cross(this.dragNormal).negate();
-          this.dragIntersect = this.getIntersect(position.current, this.game.cube.cubes, !0);
-          this.selectLayer(this.getLayer(!1));
+          this.dragIntersect = this.getIntersect(position.current, this.game.cube.cubes, true);
+          this.selectLayer(this.getLayer(false));
         }
         else {
           let axis = this.dragDirection != "x"
             ? this.dragDirection == "y" && position.current.x > this.game.world.width / 2 ? "z" : "x"
             : "y";
           this.flipAxis = new THREE.Vector3();
-          this.flipAxis[axis] = 1 * (axis == "x" ? -1 : 1);
+          this.flipAxis[axis] = axis == "x" ? -1 : 1;
         }
         this.flipAngle = 0;
         this.state = ROTATING;
       }
       else if (this.state === ROTATING) {
-        let rotation = this.dragDelta[this.dragDirection];
+        const rotation = this.dragDelta[this.dragDirection];
         if (this.flipType === "layer") {
           this.group.rotateOnAxis(this.flipAxis, rotation);
           this.flipAngle += rotation;
@@ -145,16 +144,16 @@ export default class {
       if (this.scramble !== null)
         return;
       if (this.state !== ROTATING) {
-        this.gettingDrag = !1;
+        this.gettingDrag = false;
         this.state = STILL;
         return;
       }
       this.state = ANIMATING;
       let angle = this.roundAngle(this.flipAngle + (Math.abs(this.getMomentum()[this.dragDirection]) > .05 && Math.abs(this.flipAngle) < Math.PI / 2
-        ? Math.sign(this.flipAngle) * (Math.PI / 4)
+        ? Math.sign(this.flipAngle) * Math.PI / 4
         : 0));
       let delta = angle - this.flipAngle;
-      if (this.flipType === "layer") this.rotateLayer(delta, !1, () => {
+      if (this.flipType === "layer") this.rotateLayer(delta, false, () => {
         callback(this);
         this.checkIsSolved();
       });
@@ -173,7 +172,7 @@ export default class {
    */
   rotateLayer(rotation, scramble, callback) {
     let config = scramble ? 0 : this.flipConfig;
-    let bounce = (config == 2) ? this.bounceCube() : (() => { });
+    let bounce = config == 2 ? this.bounceCube() : (() => { });
     this.rotationTween = new Tween({
       easing: this.flipEasings[config],
       duration: this.flipSpeeds[config],
@@ -199,12 +198,12 @@ export default class {
   }
   // 反弹立方体
   bounceCube() {
-    let fixDelta = !0;
+    let fixDelta = true;
     return (progress, delta, rotation) => {
       if (progress >= 1) {
         if (fixDelta) {
           delta = (progress - 1) * rotation;
-          fixDelta = !1;
+          fixDelta = false;
         }
         this.game.cube.object.rotateOnAxis(this.flipAxis, delta);
       }
@@ -255,8 +254,8 @@ export default class {
   /**
    * 移动部分
    * @param {Array} layer 图层
-   * @param {ObjectConstructor} from 起始位置
-   * @param {ObjectConstructor} to 终点位置
+   * @param {THREE.Object3D} from 起始位置
+   * @param {THREE.Object3D} to 终点位置
    */
   movePieces(layer, from, to) {
     from.updateMatrixWorld();
@@ -271,22 +270,21 @@ export default class {
   }
   /**
    * 获取图层
-   * @param {Object} position 位置
+   * @param {THREE.Vector3} position 位置
    */
   getLayer(position) {
     let layer = [];
-    let axis = this.getMainAxis(position === !1 ? this.flipAxis : position);
-    position === !1 && (position = this.getPiecePosition(this.dragIntersect.object));
+    let axis = this.getMainAxis(!position ? this.flipAxis : position);
+    !position && (position = this.getPiecePosition(this.dragIntersect.object));
     this.game.cube.pieces.forEach(piece => {
-      let piecePosition = this.getPiecePosition(piece);
-      if (piecePosition[axis] == position[axis])
+      if (this.getPiecePosition(piece)[axis] == position[axis])
         layer.push(piece.name);
     });
     return layer;
   }
   /**
    * 获取部件位置
-   * @param {Object} piece 部件
+   * @param {{}} piece 部件
    */
   getPiecePosition(piece) {
     let position = new THREE.Vector3()
@@ -294,19 +292,18 @@ export default class {
       .multiplyScalar(3);
     return this.game.cube.object.worldToLocal(position.sub(this.game.cube.animator.position)).round();
   }
-  // 争夺方块
-  scrambleCube(callback) {
+  /** 争夺方块 */
+  scrambleCube() {
     if (this.scramble == null) {
       this.scramble = this.game.scrambler;
       this.scramble.callback = typeof callback !== "function" ? () => { } : callback;
     }
     let converted = this.scramble.converted;
     let move = converted[0];
-    let layer = this.getLayer(move.position);
     this.flipAxis = new THREE.Vector3();
     this.flipAxis[move.axis] = 1;
-    this.selectLayer(layer);
-    this.rotateLayer(move.angle, !0, () => {
+    this.selectLayer(this.getLayer(move.position));
+    this.rotateLayer(move.angle, true, () => {
       converted.shift();
       converted.length > 0
         ? this.scrambleCube()
@@ -316,15 +313,15 @@ export default class {
   /**
    * 获取相交
    * @param {Object} position 位置
-   * @param {Object} object 对象
+   * @param {THREE.Mesh} object 对象
    * @param {Boolean} multiple 多个
    */
   getIntersect(position, object, multiple) {
     this.raycaster.setFromCamera(this.draggable.convertPosition(position.clone()), this.game.world.camera);
-    let intersect = (multiple)
+    let intersect = multiple
       ? this.raycaster.intersectObjects(object)
       : this.raycaster.intersectObject(object);
-    return intersect.length > 0 ? intersect[0] : !1;
+    return intersect.length > 0 ? intersect[0] : false;
   }
   /**
    * 获取主轴
@@ -335,8 +332,8 @@ export default class {
   }
   /**
    * 分离
-   * @param {Object} child 子级
-   * @param {Object} parent 父级
+   * @param {THREE.Mesh} child 子级
+   * @param {THREE.Mesh} parent 父级
    */
   detach(child, parent) {
     child.applyMatrix(parent.matrixWorld);
@@ -345,8 +342,8 @@ export default class {
   }
   /**
    * 附加
-   * @param {Object} child 子级
-   * @param {Object} parent 父级
+   * @param {THREE.Mesh} child 子级
+   * @param {THREE.Mesh} parent 父级
    */
   attach(child, parent) {
     child.applyMatrix(new THREE.Matrix4().getInverse(parent.matrixWorld));
@@ -360,17 +357,14 @@ export default class {
   addMomentumPoint(delta) {
     let time = Date.now();
     this.momentum = this.momentum.filter(moment => time - moment.time < 500);
-    if (delta !== !1)
+    if (delta)
       this.momentum.push({ delta, time });
   }
-  // 获得动力
   getMomentum() {
     let points = this.momentum.length;
     let momentum = new THREE.Vector2();
-    this.addMomentumPoint(!1);
-    this.momentum.forEach((point, index) => {
-      momentum.add(point.delta.multiplyScalar(index / points));
-    });
+    this.addMomentumPoint(false);
+    this.momentum.forEach((point, index) => momentum.add(point.delta.multiplyScalar(index / points)));
     return momentum;
   }
   /**
@@ -388,9 +382,8 @@ export default class {
   snapRotation(angle) {
     return angle.set(this.roundAngle(angle.x), this.roundAngle(angle.y), this.roundAngle(angle.z));
   }
-  // 检查是否解决
   checkIsSolved() {
-    let solved = !0;
+    let solved = true;
     let sides = { "x-": [], "x+": [], "y-": [], "y+": [], "z-": [], "z+": [] };
     this.game.cube.edges.forEach(edge => {
       let position = edge.parent
@@ -400,10 +393,7 @@ export default class {
       let mainSign = position.multiplyScalar(2).round()[mainAxis] < 1 ? "-" : "+";
       sides[mainAxis + mainSign].push(edge.name);
     });
-    Object.keys(sides).forEach(side => {
-      if (!sides[side].every(value => value === sides[side][0]))
-        solved = !1;
-    });
+    Object.keys(sides).forEach(side => sides[side].every(value => value === sides[side][0]) || (solved = false));
     if (solved)
       this.onSolved();
   }

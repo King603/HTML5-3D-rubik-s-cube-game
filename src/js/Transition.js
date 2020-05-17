@@ -45,8 +45,8 @@ export default class {
   }
   /**
    * 按钮设置
-   * @param {Array} show 显示组件
-   * @param {Array} hide 隐藏组件
+   * @param {String[]} show 显示组件
+   * @param {String[]} hide 隐藏组件
    */
   buttons(show, hide) {
     /**
@@ -62,19 +62,19 @@ export default class {
         from: { opacity: show ? 0 : 1 },
         to: { opacity: show ? 1 : 0 },
         /**
-       * 设置更新方法
-       * @param {Tween} tween 
-       */
+         * 设置更新方法
+         * @param {Tween} tween 渐变
+         */
         onUpdate(tween) {
           button.style.transform = `translate3d(0, ${(show ? 1 - tween.value : tween.value) * 1.5}em, 0)`;
         },
         onComplete() { button.style.pointerEvents = show ? "all" : "none"; }
       });
     }
-    hide.forEach(button => this.tweens.buttons[button] = buttonTween(this.game.dom.buttons[button], !1));
-    setTimeout(() => show.forEach(button =>
-      this.tweens.buttons[button] = buttonTween(this.game.dom.buttons[button], !0)
-    ), hide ? 500 : 0);
+    hide.forEach(button => this.tweens.buttons[button] = buttonTween(this.game.dom.buttons[button], false));
+    setTimeout(() => show.forEach(button => {
+      this.tweens.buttons[button] = buttonTween(this.game.dom.buttons[button], true);
+    }), hide ? 500 : 0);
   }
   /**
    * 立方体设置
@@ -114,7 +114,7 @@ export default class {
     this.tweens.float = new Tween({
       duration: 1500,
       easing: Easing.Sine.InOut(),
-      yoyo: !0,
+      yoyo: true,
       /**
        * 设置更新方法
        * @param {Tween} tween 
@@ -153,9 +153,18 @@ export default class {
     this.durations.zoom = duration;
     setTimeout(() => this.activeTransitions--, this.durations.zoom);
   }
-  // 提升
-  elevate() {
+  /**
+   * 提升
+   * @param {Boolean} complete 
+   */
+  elevate(complete) {
     this.activeTransitions++;
+    let cubeY = this.tweens.elevate = new Tween({
+      target: this.game.cube.object.position,
+      duration: complete ? 1500 : 0,
+      easing: Easing.Power.InOut(3),
+      to: { y: complete ? -.05 : this.data.cubeY }
+    });
     this.durations.elevate = 1500;
     setTimeout(() => this.activeTransitions--, this.durations.elevate);
   }
@@ -188,19 +197,14 @@ export default class {
     this.tweens.stats.forEach(tween => { tween.stop(); tween = null; });
     let tweenId = -1;
     let stats = this.game.dom.stats.querySelectorAll(".stats");
-    let easing = show ? Easing.Power.Out(2) : Easing.Power.In(3);
     stats.forEach((stat, index) => {
       this.tweens.stats[tweenId++] = new Tween({
         delay: index * (show ? 80 : 60),
         duration: 400,
-        easing,
-        /**
-         * 设置更新方法
-         * @param {Tween} tween 
-         */
+        easing: show ? Easing.Power.Out(2) : Easing.Power.In(3),
         onUpdate: tween => {
           stat.style.transform = `translate3d(0, ${show ? (1 - tween.value) * 2 : tween.value}em, 0)`;
-          stat.style.opacity = show ? tween.value : 1 - tween.value;
+          stat.style.opacity = show ? tween.value : (1 - tween.value);
         }
       });
     });
@@ -221,13 +225,12 @@ export default class {
     let listMax = 0;
     let ranges = this.game.dom.prefs.querySelectorAll(".range");
     let easing = show ? Easing.Power.Out(2) : Easing.Power.In(3);
-    ranges.forEach((range, index) => {
-      let range_$ = range.querySelector;
-      let label = range_$(".range__label");
-      let track = range_$(".range__track-line");
-      handle = range_$(".range__handle");
+    ranges.forEach((range, rangeIndex) => {
+      let label = range.querySelector(".range__label");
+      let track = range.querySelector(".range__track-line");
+      let handle = range.querySelector(".range__handle");
       let list = range.querySelectorAll(".range__list div");
-      let delay = index * (show ? 120 : 100);
+      let delay = rangeIndex * (show ? 120 : 100);
       let duration = 400;
       label.style.opacity = track.style.opacity = handle.style.opacity = show ? 0 : 1;
       handle.style.pointerEvents = show ? "all" : "none";
@@ -255,10 +258,10 @@ export default class {
          * @param {Tween} tween 
          */
         onUpdate(tween) {
-          let translate = show ? 1 - tween.value : tween.value;
-          let opacity = 1 - translate;
-          track.style.transform = `translate3d(0, ${translate}em, 0) scale3d(${opacity}, 1, 1)`;
-          track.style.opacity = opacity;
+          let translate = show ? (1 - tween.value) : tween.value;
+          let scale = 1 - translate;
+          track.style.transform = `translate3d(0, ${translate}em, 0) scale3d(${scale}, 1, 1)`;
+          track.style.opacity = scale;
         }
       });
       this.tweens.range[tweenId++] = new Tween({
@@ -271,9 +274,10 @@ export default class {
          */
         onUpdate(tween) {
           let translate = show ? 1 - tween.value : tween.value;
-          let scale = .5 + (1 - translate) * .5;
+          let opacity = 1 - translate;
+          let scale = (1 + opacity) / 2;
           handle.style.transform = `translate3d(0, ${translate}em, 0) scale3d(${scale}, ${scale}, ${scale})`;
-          handle.style.opacity = 1 - translate;
+          handle.style.opacity = opacity;
         }
       });
       list.forEach((listItem, labelIndex) => {
@@ -316,16 +320,12 @@ export default class {
       target: note.style,
       easing: Easing.Sine.InOut(),
       duration: show ? 800 : 400,
-      yoyo: show ? !0 : null,
+      yoyo: show ? true : null,
       from: { opacity: show ? 0 : parseFloat(getComputedStyle(note).opacity) },
       to: { opacity: show ? 1 : 0 },
     });
     setTimeout(() => this.activeTransitions--, this.durations.title);
   }
-  /**
-   * 计时器设置
-   * @param {Boolean} show 显示
-   */
   timer(show) {
     this.activeTransitions++;
     let timer = this.game.dom.texts.timer;
@@ -353,7 +353,7 @@ export default class {
   /**
    * 翻转字母
    * @param {String} type 样式
-   * @param {Array} letters 字母
+   * @param {NodeListOf<HTMLElement>} letters 字母
    * @param {Boolean} show 显示
    */
   flipLetters(type, letters, show) {
@@ -369,10 +369,10 @@ export default class {
         delay: index * 50,
         /**
          * 设置更新方法
-         * @param {Tween} tween 
+         * @param {Tween} tween 渐变
          */
         onUpdate(tween) {
-          letter.style.transform = `rotate3d(0, 1, 0, ${tween.value - (show ? 80 : 0)}deg)`;
+          letter.style.transform = `rotate3d(0, 1, 0, ${(tween.value - (show ? 1 : 0)) * 80}deg)`;
           letter.style.opacity = show ? tween.value : 1 - tween.value;
         },
       });

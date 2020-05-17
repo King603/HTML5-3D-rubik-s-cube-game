@@ -15,7 +15,7 @@ export default class {
   }
   // 载入游戏
   loadGame() {
-    this.game.saved = !1;
+    this.game.saved = false;
   }
   // 加载首选项
   loadPreferences() {
@@ -24,6 +24,6 @@ export default class {
     this.game.world.fov = 10;
     this.game.world.resize();
     this.game.themes.setTheme("cube");
-    return !1;
+    return false;
   }
 }

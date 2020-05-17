@@ -1,5 +1,5 @@
-import RoundedBoxGeometry from "./RoundedBoxGeometry.js";
 import Game from "./Game.js";
+import RoundedBoxGeometry from "./RoundedBoxGeometry.js";
 
 export default class {
   /**
@@ -27,7 +27,7 @@ export default class {
       this.cubes.push(piece.userData.cube);
       this.object.add(piece);
     });
-    this.holder.traverse(node => node.frustumCulled && (node.frustumCulled = !1));
+    this.holder.traverse(node => node.frustumCulled && (node.frustumCulled = false));
     this.game.world.scene.add(this.holder);
   }
   // 重置
@@ -105,7 +105,7 @@ export default class {
         shape.lineTo(line.x, line.y);
         shape.quadraticCurveTo(from.x, from.y, to.x, to.y);
       }
-      return new THREE.ExtrudeBufferGeometry(shape, { depth, bevelEnabled: !1, curveSegments: 3 });
+      return new THREE.ExtrudeBufferGeometry(shape, { depth, bevelEnabled: false, curveSegments: 3 });;
     })(pieceSize, this.geometry.edgeCornerRoundness, this.geometry.edgeDepth);
     this.positions.forEach((position, index) => {
       let piece = new THREE.Object3D();

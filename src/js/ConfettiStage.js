@@ -1,7 +1,8 @@
 import Animation from "./Animation.js";
-import Particle from "./Particle.js";
-import Game from "./Game.js";
 import Confetti from "./Confetti.js";
+import Game from "./Game.js";
+import Particle from "./Particle.js";
+
 // 继承Animation类
 export default class extends Animation {
   /**
@@ -12,7 +13,7 @@ export default class extends Animation {
    * @param {Number} count 计数
    */
   constructor(game, parent, distance, count) {
-    super(!1);
+    super(false);
     this.game = game;
     this.parent = parent;
     this.distanceFromCube = distance;
@@ -33,7 +34,7 @@ export default class extends Animation {
     // 利用ES5的performance技术获取精准的时间并赋值于属性time中
     this.time = performance.now();
     // 标记开始
-    this.playing = !0;
+    this.playing = true;
     // 获取类中个数
     let { count: i } = this;
     // 循环particles属性中各个元素的重置方法
@@ -48,7 +49,7 @@ export default class extends Animation {
    */
   stop(callback) {
     // 标记停止
-    this.playing = !1;
+    this.playing = false;
     // 标记结束
     this.completed = 0;
     // 接收回调函数

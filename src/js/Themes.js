@@ -39,7 +39,7 @@ export default class {
     this.game.dom.back.style.background = getcolor(colors.G);
     // 按钮的字体颜色设置为颜色对象的R属性值转化为长度为6的字符串不足的用0占位。
     this.game.dom.buttons.pwa.style.color = getcolor(colors.R);
-    function getcolor(color){
+    function getcolor(color) {
       return '#' + color.toString(16).padStart(6, '0');
     }
   }

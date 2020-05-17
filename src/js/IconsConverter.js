@@ -1,16 +1,16 @@
 export default class {
   /**
    * 图标转换器
-   * @param {Object} options 选项
+   * @param {{}} options 选项
    */
-  constructor(options = {} ) {
+  constructor(options = {}) {
     options = Object.assign({
       tagName: "icon",
       className: "icon",
-      styles: !1,
+      styles: false,
       icons: {},
-      observe: !1,
-      convert: !1,
+      observe: false,
+      convert: false,
     }, options);
     this.tagName = options.tagName;
     this.className = options.className;
@@ -23,7 +23,7 @@ export default class {
       this.convertAllIcons();
     if (options.observe) {
       this.observer = new (window.MutationObserver || window.WebKitMutationObserver)(() => this.convertAllIcons());
-      this.observer.observe(document.documentElement, { childList: !0, subtree: !0 });
+      this.observer.observe(document.documentElement, { childList: true, subtree: true });
     }
     return this;
   }
@@ -39,7 +39,7 @@ export default class {
     let svgData = this.icons[icon.attributes[0].localName];
     if (typeof svgData === "undefined")
       return;
-    let svg = this.svgTag.cloneNode(!0);
+    let svg = this.svgTag.cloneNode(true);
     let viewBox = svgData.viewbox.split(" ");
     svg.setAttributeNS(null, "viewBox", svgData.viewbox);
     svg.style.width = viewBox[2] / viewBox[3] + "em";
@@ -47,7 +47,6 @@ export default class {
     svg.innerHTML = svgData.content;
     icon.parentNode.replaceChild(svg, icon);
   }
-  // 添加样式
   addStyles() {
     let style = document.createElement("style");
     style.innerHTML = `.${this.className} { 
@@ -55,8 +54,7 @@ export default class {
       font-size: inherit; 
       overflow: visible; 
       vertical-align: -.125em; 
-      preserveAspectRatio: 
-      none; 
+      preserveAspectRatio: none; 
     }`;
     document.head.appendChild(style);
   }

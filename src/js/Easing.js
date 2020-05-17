@@ -50,7 +50,7 @@ export default {
       let p1 = Math.max(amplitude, 1);
       let p2 = period / Math.min(amplitude, 1);
       p2 = round / p2;
-      return t => p1 * Math.pow(2, -10 * t) * Math.sin((t - p2 / round * (Math.asin(1 / p1) || 0)) * p2) + 1;
+      return t => p1 * Math.pow(2, -10 * t) * Math.sin((t - (p2 / round * (Math.asin(1 / p1) || 0))) * p2) + 1;
     },
   },
 };

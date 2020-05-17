@@ -21,10 +21,10 @@ export default class {
     this.solves++;
     if (this.scores.lenght > 100)
       this.scores.shift();
-    let bestTime = !1;
+    let bestTime = false;
     if (time < this.best || this.best === 0) {
       this.best = time;
-      bestTime = !0;
+      bestTime = true;
     }
     if (time > this.worst)
       this.worst = time;
@@ -65,6 +65,6 @@ export default class {
   convertTime(time) {
     if (time <= 0)
       return 0;
-    return `${parseInt(time / 1000 / 60)}:${parseInt(time / 1000 % 60).toString().padStart(2, "0")}`;
+      return `${parseInt(time / 1000 / 60)}:${parseInt(time / 1000 % 60).toString().padStart(2, "0")}`;
   }
 }

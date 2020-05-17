@@ -3,15 +3,15 @@ export default class {
   /**
    * 范围类
    * @param {String} name 名称
-   * @param {Object} options 首选项
+   * @param {{range: [], value: Number, step: Number, onUpdate: () => { }, onComplete: () => { },}} options 首选项
    */
   constructor(name, options = {}) {
     options = Object.assign({
       range: [0, 1],
       value: 0,
       step: 0,
-      onUpdate: () => { },
-      onComplete: () => { },
+      onUpdate() { },
+      onComplete() { },
     }, options);
     this.element = document.querySelector(`.range[name="${name}"]`);
     this.track = this.element.querySelector('.range__track');
@@ -27,7 +27,7 @@ export default class {
   // 初始化拖动
   initDraggable() {
     let current;
-    this.draggable = new Draggable(this.handle, { calcDelta: !0 });
+    this.draggable = new Draggable(this.handle, { calcDelta: true });
     this.draggable.onDragStart = () => {
       current = this.positionFromValue(this.value);
       this.handle.style.left = current + 'px';

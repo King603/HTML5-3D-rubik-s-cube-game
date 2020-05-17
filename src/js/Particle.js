@@ -18,10 +18,10 @@ export default class {
   }
   /**
    * 重置
-   * @param {*} randomHeight 随机高度
+   * @param {Boolean} randomHeight 随机高度
    */
-  reset(randomHeight = !0) {
-    this.completed = !1;
+  reset(randomHeight = true) {
+    this.completed = false;
     this.mesh.material.color.set(this.color = new THREE.Color(this.options.colors[Math.floor(Math.random() * this.options.colors.length)]));
     this.speed = THREE.Math.randFloat(this.options.speed.min, this.options.speed.max) * -1;
     let { width, height } = this.confetti;
@@ -35,7 +35,7 @@ export default class {
   }
   // 停止
   stop() {
-    this.completed = !0;
+    this.completed = true;
     this.confetti.completed++;
   }
   /**
@@ -45,6 +45,6 @@ export default class {
   update(delta) {
     this.mesh.position.y += this.speed * delta;
     this.mesh.rotation[this.revolutionAxis] += this.revolutionSpeed;
-    this.mesh.position.y < -this.confetti.height - this.size && this.confetti.playing ? this.reset(!1) : this.stop();
+    this.mesh.position.y < -this.confetti.height - this.size && this.confetti.playing ? this.reset(false) : this.stop();
   }
 }

@@ -7,7 +7,7 @@ export default class extends Animation {
    * @param {Game} game 
    */
   constructor(game) {
-    super(!1);
+    super(false);
     this.game = game;
     this.reset();
   }
