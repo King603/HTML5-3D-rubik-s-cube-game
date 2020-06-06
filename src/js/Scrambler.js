@@ -14,15 +14,15 @@ export default class {
   }
   /**
    * 争夺
-   * @param {*} scramble 争夺
+   * @param {String} scramble 争夺
    */
   scramble(scramble) {
     let count = 0;
-    this.moves = (typeof scramble !== "undefined") ? scramble.split(" ") : [];
+    this.moves = typeof scramble !== "undefined" ? scramble.split(" ") : [];
     if (this.moves.length < 1) {
       let faces = "UDLRFB";
       let modifiers = ["", "'", "2"];
-      let total = (typeof scramble === "undefined") ? this.scrambleLength : scramble;
+      let total = typeof scramble === "undefined" ? this.scrambleLength : scramble;
       while (count < total) {
         let move = faces[Math.floor(Math.random() * 6)] + modifiers[Math.floor(Math.random() * 3)];
         if (count > 0 && move.charAt(0) == this.moves[count - 1].charAt(0))

@@ -49,18 +49,15 @@ export default class {
         for (let z = 0; z < 3; z++) {
           let position = new THREE.Vector3(x - 1, y - 1, z - 1);
           let edges = [];
-          if (x == 0)
-            edges.push(0);
-          if (x == 2)
-            edges.push(1);
-          if (y == 0)
-            edges.push(2);
-          if (y == 2)
-            edges.push(3);
-          if (z == 0)
-            edges.push(4);
-          if (z == 2)
-            edges.push(5);
+          setEdges(x, 0, 1);
+          setEdges(y, 2, 3);
+          setEdges(z, 4, 5);
+          function setEdges(asize, n1, n2) {
+            switch (asize) {
+              case 0: edges.push(n1); break;
+              case 2: edges.push(n2); break;
+            }
+          }
           position.edges = edges;
           this.positions.push(position);
         }

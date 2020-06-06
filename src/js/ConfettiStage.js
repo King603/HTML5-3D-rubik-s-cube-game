@@ -45,7 +45,7 @@ export default class extends Animation {
   }
   /**
    * 停止
-   * @param {Function} callback 回调函数
+   * @param {{()=>{}}} callback 回调函数
    */
   stop(callback) {
     // 标记停止

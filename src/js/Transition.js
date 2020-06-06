@@ -159,7 +159,7 @@ export default class {
    */
   elevate(complete) {
     this.activeTransitions++;
-    let cubeY = this.tweens.elevate = new Tween({
+    this.tweens.elevate = new Tween({
       target: this.game.cube.object.position,
       duration: complete ? 1500 : 0,
       easing: Easing.Power.InOut(3),
@@ -258,7 +258,7 @@ export default class {
          * @param {Tween} tween 
          */
         onUpdate(tween) {
-          let translate = show ? (1 - tween.value) : tween.value;
+          let translate = show ? 1 - tween.value : tween.value;
           let scale = 1 - translate;
           track.style.transform = `translate3d(0, ${translate}em, 0) scale3d(${scale}, 1, 1)`;
           track.style.opacity = scale;

@@ -10,6 +10,7 @@ import Themes from "./Themes.js";
 import Timer from "./Timer.js";
 import Transition from "./Transition.js";
 import World from "./World.js";
+
 new IconsConverter({
   icons: {
     settings: {
@@ -35,6 +36,7 @@ new IconsConverter({
   },
   convert: true,
 });
+
 // 常量定义
 const MENU = 0;
 const PLAYING = 1;

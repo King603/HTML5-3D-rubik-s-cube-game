@@ -14,7 +14,7 @@ export default class {
   }
   /**
    * 添加时间
-   * @param {TimeRanges} time 
+   * @param {Number} time 
    */
   addScore(time) {
     this.scores.push(time);

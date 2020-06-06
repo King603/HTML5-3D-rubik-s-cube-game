@@ -27,7 +27,7 @@ let animationEngine = (() => {
     }
     /**
      * 添加
-     * @param {Animation} animation 构造函数
+     * @param {{id: Number}} animation 构造函数
      */
     add(animation) {
       // 赋值于animation.id后自增
@@ -46,7 +46,7 @@ let animationEngine = (() => {
     }
     /**
      * 删除
-     * @param {Animation} animation 构造函数
+     * @param {{id: Number}} animation 构造函数
      */
     remove(animation) {
       // 获取animation.id在属性ids中的对应位置

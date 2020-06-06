@@ -58,7 +58,7 @@ export default class extends Animation {
   }
   /**
    * 获取FromTo
-   * @param {Object} options 首选项 
+   * @param {{target:null,from:{},to:null}} options 首选项 
    */
   getFromTo(options) {
     if (!options.target || !options.to) {

@@ -1,8 +1,10 @@
 import Range from "./Range.js";
+import Game from "./Game.js";
+
 export default class {
   /**
    * 首选项类
-   * @param {FunctionConstructor} game 游戏
+   * @param {Game} game 游戏
    */
   constructor(game) {
     this.game = game;
