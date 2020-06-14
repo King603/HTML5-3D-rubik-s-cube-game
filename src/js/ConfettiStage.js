@@ -44,8 +44,11 @@ export default class extends Animation {
     super.start();
   }
   /**
+   * @callback callbackFunction
+   */
+  /**
    * 停止
-   * @param {{()=>{}}} callback 回调函数
+   * @param {callbackFunction} callback 回调函数
    */
   stop(callback) {
     // 标记停止

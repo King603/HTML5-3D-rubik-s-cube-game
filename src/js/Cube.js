@@ -75,7 +75,7 @@ export default class {
       let x, y, width, height;
       x = y = -size / 2;
       width = height = size;
-      radius = size * radius;
+      radius *= size;
       let shape = new THREE.Shape();
       shape.moveTo(x, y + radius);
       draw(
@@ -98,6 +98,12 @@ export default class {
         { x, y },
         { x, y: y + radius }
       );
+      /**
+       * 布局
+       * @param {{x:Number,y:Number}} line 
+       * @param {{x:Number,y:Number}} from 
+       * @param {{x:Number,y:Number}} to 
+       */
       function draw(line, from, to) {
         shape.lineTo(line.x, line.y);
         shape.quadraticCurveTo(from.x, from.y, to.x, to.y);

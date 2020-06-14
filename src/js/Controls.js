@@ -165,10 +165,14 @@ export default class {
     };
   }
   /**
+   * @callback callbackFunction
+   * @param {[]} layer
+   */
+  /**
    * 旋转层
    * @param {Number} rotation 旋转
    * @param {Boolean} scramble 争夺
-   * @param {Function} callback 回调函数调用后设置
+   * @param {callbackFunction} callback 回调函数调用后设置
    */
   rotateLayer(rotation, scramble, callback) {
     let config = scramble ? 0 : this.flipConfig;
@@ -210,9 +214,12 @@ export default class {
     };
   }
   /**
+   * @callback callbackFunction1
+   */
+  /**
    * 旋转立方体
    * @param {Number} rotation 旋转
-   * @param {Function} callback 回调函数调用后设置
+   * @param {callbackFunction1} callback 回调函数调用后设置
    */
   rotateCube(rotation, callback) {
     let { flipConfig: config } = this;
@@ -236,7 +243,7 @@ export default class {
   }
   /**
    * 选择图层
-   * @param {Array} layer 图层
+   * @param {[]} layer 图层
    */
   selectLayer(layer) {
     this.group.rotation.set(0, 0, 0);
@@ -245,7 +252,7 @@ export default class {
   }
   /**
    * 取消层
-   * @param {Array} layer 图层
+   * @param {[]} layer 图层
    */
   deselectLayer(layer) {
     this.movePieces(layer, this.group, this.game.cube.object);
@@ -253,7 +260,7 @@ export default class {
   }
   /**
    * 移动部分
-   * @param {Array} layer 图层
+   * @param {[]} layer 图层
    * @param {THREE.Object3D} from 起始位置
    * @param {THREE.Object3D} to 终点位置
    */
@@ -312,7 +319,7 @@ export default class {
   }
   /**
    * 获取相交
-   * @param {Object} position 位置
+   * @param {{}} position 位置
    * @param {THREE.Mesh} object 对象
    * @param {Boolean} multiple 多个
    */

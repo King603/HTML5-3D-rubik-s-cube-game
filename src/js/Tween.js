@@ -1,8 +1,17 @@
 import Animation from "./Animation.js";
+
 export default class extends Animation {
   /**
+   * @callback resetFunction1
+   * @param {Number} progress 
+   */
+  /**
+   * @callback resetFunction2
+   * @param {Animation} a
+   */
+  /**
    * 渐变类
-   * @param {{ duration:Number, easing:() => { }, onUpdate:() => { }, onComplete:() => { }, delay:Boolean, yoyo:Boolean }} options 首选项 
+   * @param {{ duration:Number, easing:resetFunction1, onUpdate:resetFunction2, onComplete:resetFunction2, delay:Boolean, yoyo:Boolean }} options 首选项 
    */
   constructor(options) {
     super(false);

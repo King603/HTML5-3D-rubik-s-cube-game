@@ -48,7 +48,7 @@ export default class {
       let row = { D: -1, U: 1, L: -1, R: 1, F: 1, B: -1 }[face];
       let position = new THREE.Vector3();
       position[axis] = row;
-      let convertedMove = { position, axis, angle:Math.PI / 2 * row * (modifier == "'" ? 1 : -1), name };
+      let convertedMove = { position, axis, angle: Math.PI / 2 * row * (modifier == "'" ? 1 : -1), name };
       this.converted.push(convertedMove);
       if (modifier == "2")
         this.converted.push(convertedMove);

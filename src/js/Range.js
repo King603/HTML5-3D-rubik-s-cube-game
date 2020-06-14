@@ -1,9 +1,12 @@
 import Draggable from "./Draggable.js";
+/**
+ * @callback callbackFunction
+ */
 export default class {
   /**
    * 范围类
    * @param {String} name 名称
-   * @param {{range: [], value: Number, step: Number, onUpdate: () => { }, onComplete: () => { }}} options 首选项
+   * @param {{range: [], value: Number, step: Number, onUpdate: callbackFunction, onComplete: callbackFunction}} options 首选项
    */
   constructor(name, options = {}) {
     options = Object.assign({

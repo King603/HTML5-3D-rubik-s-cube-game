@@ -61,7 +61,7 @@ export default class {
   }
   /**
    * 更新颜色
-   * @param {Array} colors 颜色数组
+   * @param {{ U: Number, D: Number, F: Number, R: Number, B: Number, L: Number, P: Number, G: Number }} colors 颜色数组
    */
   updateColors(colors) {
     // forEach循环遍历属性holders内的元素

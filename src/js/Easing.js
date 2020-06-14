@@ -45,6 +45,10 @@ export default {
   },
   // 弹性
   Elastic: {
+    /**
+     * @param {Number} amplitude 
+     * @param {Number} period 
+     */
     Out(amplitude, period = .3) {
       let round = Math.PI * 2;
       let p1 = Math.max(amplitude, 1);

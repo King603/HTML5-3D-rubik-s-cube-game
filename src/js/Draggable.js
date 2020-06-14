@@ -2,7 +2,7 @@ export default class {
   /**
    * 拖动类
    * @param {HTMLObjectElement | HTMLElement | HTMLAnchorElement | HTMLAppletElement | HTMLAreaElement | HTMLVideoElement} element 元素
-   * @param {Object} options 选项
+   * @param {{}} options 选项
    */
   constructor(element, options = {}) {
     this.position = {
@@ -72,7 +72,7 @@ export default class {
   }
   /**
    * 获取当前位置
-   * @param {Object} event 事件
+   * @param {TouchEvent} event 事件
    */
   getPositionCurrent(event) {
     let dragEvent = event.touches
@@ -82,7 +82,7 @@ export default class {
   }
   /**
    * 转换位置
-   * @param {Object} position 位置
+   * @param {{}} position 位置
    */
   convertPosition(position) {
     position.x = position.x / this.element.offsetWidth * 2 - 1;

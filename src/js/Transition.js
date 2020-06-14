@@ -51,7 +51,7 @@ export default class {
   buttons(show, hide) {
     /**
      * 按钮渐变
-     * @param {Element} button 按钮
+     * @param {HTMLElement} button 按钮
      * @param {Boolean} show 显示组件
      */
     function buttonTween(button, show) {
