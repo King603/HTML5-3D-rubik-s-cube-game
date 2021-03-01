@@ -18,6 +18,6 @@
   "homepage": "https://github.com/King603/HTML5-3D-rubik-s-cube-game#readme",
   "dependencies": {
     "@types/three": "^0.103.2",
-    "three": "^0.116.1"
+    "three": "^0.125.0"
   }
 }
